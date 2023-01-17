@@ -7,13 +7,19 @@ import Types (BFOperation(..))
 import Text.Parsec
 import Text.Parsec.String
 
+import Data.Word (Word8)
+
+-- "Comments" parser combinator. Ignores everything except the allowed symbols
+parseComment :: Parser ()
+parseComment = skipMany $ noneOf "<>[]+-.,"
+
 {-
 Increment and decrement parser combinator. Since the are the same except for the sign
 and symbols used, the function is parametrized with the symbols to look for and the
 resulting value
 -}
-parseIncrement :: Char -> (Int -> BFOperation) -> Parser BFOperation
-parseIncrement sym op = (many1 $ char sym) >>= \inc -> return $ op $ length inc
+parseIncrement :: Char -> (Word8 -> BFOperation) -> Parser BFOperation
+parseIncrement sym op = (many1 $ char sym) >>= \inc -> return $ op $ fromIntegral $ length inc
 
 -- Shift parser combinator. Similar to parseIncrement
 parseShift :: Char -> BFOperation -> Parser BFOperation
@@ -43,5 +49,8 @@ parseBFcode = parseIncrement '+' Increment
 
 readExpr :: String -> String
 readExpr input = case parse (parseBFcode `manyTill` eof) "Not found" input of
+  Left err  -> show err
+  Right val -> "Found expression: " ++ show val
+
   Left err  -> show err
   Right val -> "Found expression: " ++ show val
