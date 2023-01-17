@@ -64,7 +64,7 @@ right list, which is all very fast in Haskell. E.g.:
 	shiftRight (Tape ls c (r:rs) = Tape (c:ls) r rs
 	shiftLeft  (Tape (l:ls) c rs = Tape ls l (c:rs)
 
-Also, it allows me to spare memory, using Haskell's laziness^ it's possible to only store the right list
+Also, it allows me to spare memory, using Haskell's laziness: it's possible to only store the right list
 up to the last non-zero element.
 -}
 data Tape = Tape [Word8] Word8 [Word8]
