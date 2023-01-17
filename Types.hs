@@ -1,6 +1,6 @@
 module Types where
 
-import Data.Word
+import Data.Word (Word8)
 
 -- All the brainfuck operations. Increment and Decrement are parametrized
 -- to allow for optimization
