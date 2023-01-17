@@ -1,56 +1,56 @@
 module Parser where
 
+import Prelude hiding (read)
+
 -- Defines custom types for data and errors
 import Types (BFOperation(..))
 
 -- Necessary to build a parser
 import Text.Parsec
-import Text.Parsec.String
+import Text.Parsec.String (Parser)
 
 import Data.Word (Word8)
 
 -- "Comments" parser combinator. Ignores everything except the allowed symbols
-parseComment :: Parser ()
-parseComment = skipMany $ noneOf "<>[]+-.,"
+comment :: Parser ()
+comment = skipMany $ (noneOf "<>[]+-.,")
 
 {-
 Increment and decrement parser combinator. Since the are the same except for the sign
 and symbols used, the function is parametrized with the symbols to look for and the
 resulting value
 -}
-parseIncrement :: Char -> (Word8 -> BFOperation) -> Parser BFOperation
-parseIncrement sym op = (many1 $ char sym) >>= \inc -> return $ op $ fromIntegral $ length inc
+increment, decrement :: Parser BFOperation
+increment = do
+  inc <- many1 $ char '+'
+  return $ Increment $ fromIntegral $ length inc
+decrement = do
+  inc <- many1 $ char '-'
+  return $ Decrement $ fromIntegral $ length inc 
 
--- Shift parser combinator. Similar to parseIncrement
-parseShift :: Char -> BFOperation -> Parser BFOperation
-parseShift sym op = char sym >> return op
+-- Shift parser combinators. Similar to parseIncrement
+shiftl, shiftr :: Parser BFOperation
+shiftl = char '<' >> return ShiftLeft
+shiftr = char '>' >> return ShiftRight
 
 -- IO parser combinator. Similar to the previous two
-parseIO :: Char -> BFOperation -> Parser BFOperation
-parseIO sym op = char sym >> return op
+read, write :: Parser BFOperation
+read  = char ',' >> return Read
+write = char '.' >> return Print
 
 -- Loop parser combinator. Thanks to the properties of Parsec, it automatically ensures
 -- that the brackets are balanced
-parseLoop :: Parser BFOperation
-parseLoop = do
+loop :: Parser BFOperation
+loop = do
   char '['
-  loop <- parseBFcode `manyTill` (char ']')
+  loop <- code `manyTill` (char ']')
   return $ Loop loop
 
 -- Comlete parser
-parseBFcode :: Parser BFOperation
-parseBFcode = parseIncrement '+' Increment
-           <|> parseIncrement '-' Decrement
-           <|> parseShift '>' ShiftRight
-           <|> parseShift '<' ShiftLeft
-           <|> parseIO ',' Read
-           <|> parseIO '.' Print
-           <|> parseLoop
+code :: Parser BFOperation
+code = choice [increment, decrement, shiftl, shiftr, read, write, loop]
 
 readExpr :: String -> String
-readExpr input = case parse (parseBFcode `manyTill` eof) "Not found" input of
-  Left err  -> show err
-  Right val -> "Found expression: " ++ show val
-
+readExpr input = case parse ((comment >> code) `manyTill` eof) "Not found" input of
   Left err  -> show err
   Right val -> "Found expression: " ++ show val
