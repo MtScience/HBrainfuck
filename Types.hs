@@ -40,7 +40,7 @@ cell size in Python:
 
 Haskell, though, doesn't allow mutability and list random access is slow. Fortunately,
 in brainfuck you can't shift more than one cell at a time, so I will use a zipper:
-a three-field structure, containing (possibly empty) lists of Word8'sin the first and
+a three-field structure, containing (possibly empty) lists of Word8's in the first and
 third fields, and a Word8 in the second. Field 1 represents all the cells before current
 in reverse order, field 2 represent the current cell and field 3 represents the cells
 after current. E.g., if at some point the tape looks like this (storing a string "Haskell"):
