@@ -11,7 +11,6 @@ data BFOperation = Print
                  | Increment Word8
                  | Decrement Word8
                  | Loop [BFOperation]
-                 deriving Show
 
 {-
 A type for returning errors. Although, brainfuck is too simple to have many errors:
@@ -22,6 +21,9 @@ So, basically, the only error I can think of is unbalanced brackets, which is
 a parsing error. Therefore...
 -}
 data BFError = ParseError String
+
+instance Show BFError where
+  show (ParseError err) = "Parse error:\n" ++ err
 
 {-
 Brainfuck uses the concept of a linear tape of byte-sized cells of length
@@ -64,7 +66,7 @@ right list, which is all very fast in Haskell. E.g.:
 	shiftRight (Tape ls c (r:rs) = Tape (c:ls) r rs
 	shiftLeft  (Tape (l:ls) c rs = Tape ls l (c:rs)
 
-Also, it allows me to spare memory, using Haskell's laziness: it's possible to only store the right list
+Also, it allows me to spare memory, using Haskell's laziness: it's possible to only store the lists
 up to the last non-zero element.
 -}
 data Tape = Tape [Word8] Word8 [Word8]
