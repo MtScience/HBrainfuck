@@ -30,8 +30,7 @@ Brainfuck uses the concept of a linear tape of byte-sized cells of length
 at least 30,000, with a pointer referencing one of those cells. In C that
 would be expressed as
 
-	char tape[30000];
-	memset(arr, 0, sizeof(arr));
+	char tape[30000] = {0};
 	int current = 0;
 
 In Python that would be a list (although, I don't know of an obvoious way to limit the
