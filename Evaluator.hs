@@ -1,4 +1,4 @@
-module Evaluator where
+module Evaluator (run) where
 
 import Control.Monad.State
 import Data.Char (chr, ord)
@@ -53,4 +53,6 @@ evaluate Read            = do
 evaluate loop@(Loop ops) = do
   Tape _ cur _ <- get
   unless (cur == 0) (mapM_ evaluate ops >> evaluate loop)
-  
+
+run :: [BFOperation] -> Tape -> IO Tape
+run code initTape = execStateT (mapM_ evaluate code) initTape
