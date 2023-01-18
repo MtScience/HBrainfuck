@@ -1,4 +1,4 @@
-module Parser where
+module Parser (readExpr) where
 
 import Prelude hiding (read)
 import Control.Monad.Except
@@ -44,14 +44,14 @@ write = char '.' >> return Print
 loop :: Parser BFOperation
 loop = do
   char '['
-  loop <- (comment >> code) `manyTill` (char ']')
+  loop <- code `manyTill` (char ']')
   return $ Loop loop
 
 -- Complete parser
 code :: Parser BFOperation
-code = choice [increment, decrement, shiftl, shiftr, read, write, loop]
+code = comment >> choice [increment, decrement, shiftl, shiftr, read, write, loop]
 
 readExpr :: String -> Either BFError [BFOperation]
-readExpr input = case parse ((comment >> code) `manyTill` eof) "Not found" input of
+readExpr input = case parse (code `manyTill` eof) "brainfuck" input of
   Left err  -> throwError $ ParseError $ show err
   Right val -> return val
