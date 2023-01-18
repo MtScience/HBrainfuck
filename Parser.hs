@@ -1,15 +1,14 @@
 module Parser where
 
 import Prelude hiding (read)
-
--- Defines custom types for data and errors
-import Types (BFOperation(..))
+import Data.Word (Word8)
 
 -- Necessary to build a parser
 import Text.Parsec
 import Text.Parsec.String (Parser)
 
-import Data.Word (Word8)
+-- Defines custom types for data and errors
+import Types (BFOperation(..))
 
 -- "Comments" parser combinator. Ignores everything except the allowed symbols
 comment :: Parser ()
