@@ -1,6 +1,7 @@
 module Parser where
 
 import Prelude hiding (read)
+import Control.Monad.Except
 import Data.Word (Word8)
 
 -- Necessary to build a parser
@@ -8,14 +9,15 @@ import Text.Parsec
 import Text.Parsec.String (Parser)
 
 -- Defines custom types for data and errors
-import Types (BFOperation(..))
+import Types
+
 
 -- "Comments" parser combinator. Ignores everything except the allowed symbols
 comment :: Parser ()
 comment = skipMany $ (noneOf "<>[]+-.,")
 
 {-
-Increment and decrement parser combinator. Since the are the same except for the sign
+Increment and decrement parser combinators. Since the are the same except for the sign
 and symbols used, the function is parametrized with the symbols to look for and the
 resulting value
 -}
@@ -32,7 +34,7 @@ shiftl, shiftr :: Parser BFOperation
 shiftl = char '<' >> return ShiftLeft
 shiftr = char '>' >> return ShiftRight
 
--- IO parser combinator. Similar to the previous two
+-- IO parser combinators. Similar to the previous four
 read, write :: Parser BFOperation
 read  = char ',' >> return Read
 write = char '.' >> return Print
@@ -42,14 +44,14 @@ write = char '.' >> return Print
 loop :: Parser BFOperation
 loop = do
   char '['
-  loop <- code `manyTill` (char ']')
+  loop <- (comment >> code) `manyTill` (char ']')
   return $ Loop loop
 
--- Comlete parser
+-- Complete parser
 code :: Parser BFOperation
 code = choice [increment, decrement, shiftl, shiftr, read, write, loop]
 
-readExpr :: String -> String
+readExpr :: String -> Either BFError [BFOperation]
 readExpr input = case parse ((comment >> code) `manyTill` eof) "Not found" input of
-  Left err  -> show err
-  Right val -> "Found expression: " ++ show val
+  Left err  -> throwError $ ParseError $ show err
+  Right val -> return val
