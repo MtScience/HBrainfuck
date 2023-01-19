@@ -37,7 +37,7 @@ evaluate Get = do
     if eof
     then return ()
     else do
-        val <- fromIntegral . ord <$> liftIO getChar
+        val <- fromIntegral . ord . head <$> liftIO getLine
         modify (overwrite val)
 evaluate loop@(Loop ops) = do
     Tape _ cur _ <- get
