@@ -27,11 +27,12 @@ evaluate (Increment inc) = modify $ increment inc
 evaluate (Decrement dec) = modify $ decrement dec
 evaluate ShiftLeft       = modify shiftl
 evaluate ShiftRight      = modify shiftr
-evaluate Print           = do
+evaluate Reset           = modify $ overwrite 0
+evaluate Put = do
     Tape _ val _ <- get
     liftIO $ putChar $ chr $ fromIntegral val
     return ()
-evaluate Read            = do
+evaluate Get = do
     eof <- liftIO isEOF
     if eof
     then return ()
@@ -41,7 +42,6 @@ evaluate Read            = do
 evaluate loop@(Loop ops) = do
     Tape _ cur _ <- get
     unless (cur == 0) (mapM_ evaluate ops >> evaluate loop)
-evaluate Reset           = modify $ overwrite 0
 
 run :: [BFOperation] -> Tape -> IO Tape
 run = execStateT . mapM_ evaluate
