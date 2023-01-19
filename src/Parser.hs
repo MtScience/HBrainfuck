@@ -31,7 +31,7 @@ code :: Parser BFOperation
 code = choice [increment, decrement, shiftl, shiftr, get, put, loop]
 
 readExpr :: String -> Either BFError [BFOperation]
-readExpr input = case parse (many1 code) "brainfuck" $ stripComments input of
+readExpr input = case parse (many1 code <* eof) "brainfuck" $ stripComments input of
     Left err  -> throwError . ParseError $ show err
     Right val -> return $ optimize val
 
