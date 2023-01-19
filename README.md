@@ -14,7 +14,7 @@ Additional features and implementation details:
 * Interactive mode (activated when the executable is run without a target file). Tape state persists between commands. An interactive session can be ended by inputting EOF;
 * Comments are supported;
 * Optimized cell increments and decrements, `[-]`, `[+]`;
-* When there is a `]` in the code without preceding `[`, all code after `]` is ignored (planned to fix, but such a situation causes undefined behaviour anyway, so it's good enough for now).
+* When there is a `]` in the code without preceding `[`, all code after `]` is ignored (to be fixed, but such a situation causes undefined behaviour anyway, so it's good enough for now).
 
 ## Running
 
