@@ -17,21 +17,20 @@ stripComments = filter (`elem` "<>[]+-.,")
 
 -- Increment and decrement parser combinators
 increment, decrement :: Parser BFOperation
-increment = (Increment . fromIntegral . length) <$> (many1 $ char '+')
-decrement = (Decrement . fromIntegral . length) <$> (many1 $ char '-')
+increment = Increment . fromIntegral . length <$> many1 (char '+')
+decrement = Decrement . fromIntegral . length <$> many1 (char '-')
 
 -- Shift parser combinators. Similar to parseIncrement
 shiftl, shiftr :: Parser BFOperation
-shiftl = const ShiftLeft <$> char '<'
-shiftr = const ShiftRight <$> char '>'
+shiftl = ShiftLeft <$ char '<'
+shiftr = ShiftRight <$ char '>'
 
 -- IO parser combinators. Similar to the previous four
 read, write :: Parser BFOperation
-read  = const Read <$> char ','
-write = const Print <$> char '.'
+read  = Read <$ char ','
+write = Print <$ char '.'
 
--- Loop parser combinator. Thanks to the properties of Parsec, it automatically ensures
--- that the brackets are balanced
+-- Loop parser combinator
 loop :: Parser BFOperation
 loop = Loop <$> between (char '[') (char ']') code
 
@@ -45,7 +44,17 @@ readExpr input = case parse code "brainfuck" $ stripComments input of
     Right val -> return $ optimize val
 
 optimize :: [BFOperation] -> [BFOperation]
-optimize []                         = []
-optimize ((Loop [Increment 1]):ops) = Reset : optimize ops
-optimize ((Loop [Decrement 1]):ops) = Reset : optimize ops
-optimize (op:ops)                   = op : optimize ops
+optimize []                           = []
+optimize (Increment inc : Decrement dec : ops)
+    | inc > dec = optimize $ Increment (inc - dec) : ops
+    | inc < dec = optimize $ Decrement (dec - inc) : ops
+    | otherwise = ops
+optimize (Decrement dec : Increment inc : ops)
+    | inc > dec = optimize $ Increment (inc - dec) : ops
+    | inc < dec = optimize $ Decrement (dec - inc) : ops
+    | otherwise = ops
+optimize ((Loop [Increment 1]) : ops) = optimize $ Reset : ops
+optimize ((Loop [Decrement 1]) : ops) = optimize $ Reset : ops
+optimize (Loop [] : ops)              = optimize ops
+optimize (Loop loop : ops)            = Loop (optimize loop) : optimize ops
+optimize (op:ops)                     = op : optimize ops
