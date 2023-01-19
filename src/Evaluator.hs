@@ -7,23 +7,7 @@ import System.IO (isEOF)
 
 import Types
 
-{-
-First, some helper functions to work with the tape. Placed here instead of
-the Types module because these hae to do with actual execution.
 
-The functions "increment" and "decrement", obviously, increment and decrement
-the value of the current cell.
-
-The functions "shiftl" and "shiftr" move the pointer to the left or right,
-respectively. By using lists in both left and right fields of the Tape structure
-I can make the Tape practically infinite in both directions. Of course, portable
-brainfuck programs, shouldn't assume the tape has _any_fields to the left, and it
-is possible to make it an error, but since it is allowed in the specifications,
-easier to implement and allows for greater flexibility, I'll make the tape infinite.
-
-The function "overwrite" stores a value in the current cell, dismissing whatever
-was in there before.
--}
 increment, decrement :: Word8 -> Tape -> Tape
 increment inc (Tape ls cur rs) = Tape ls (cur + inc) rs
 decrement dec (Tape ls cur rs) = Tape ls (cur - dec) rs
@@ -38,7 +22,6 @@ shiftl (Tape (l:ls) cur rs) = Tape ls l (cur:rs)
 shiftr (Tape ls cur [])     = Tape (cur:ls) 0 []
 shiftr (Tape ls cur (r:rs)) = Tape (cur:ls) r rs
 
--- Evaluator function
 evaluate :: BFOperation -> StateT Tape IO ()
 evaluate (Increment inc) = modify $ increment inc
 evaluate (Decrement dec) = modify $ decrement dec
