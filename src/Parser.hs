@@ -4,7 +4,6 @@ import Control.Monad.Except
 import Data.Word (Word8)
 
 import Text.Parsec
-import Text.Parsec.String (Parser)
 
 import Types
 
@@ -12,22 +11,22 @@ import Types
 stripComments :: String -> String
 stripComments = filter (`elem` "<>[]+-.,")
 
-increment, decrement :: Parser BFOperation
+increment, decrement :: Parsec String () BFOperation
 increment = Increment . fromIntegral . length <$> many1 (char '+')
 decrement = Decrement . fromIntegral . length <$> many1 (char '-')
 
-shiftl, shiftr :: Parser BFOperation
+shiftl, shiftr :: Parsec String () BFOperation
 shiftl = ShiftLeft <$ char '<'
 shiftr = ShiftRight <$ char '>'
 
-get, put :: Parser BFOperation
+get, put :: Parsec String () BFOperation
 get = Get <$ char ','
 put = Put <$ char '.'
 
-loop :: Parser BFOperation
+loop :: Parsec String () BFOperation
 loop = Loop <$> between (char '[') (char ']') (many code)
 
-code :: Parser BFOperation
+code :: Parsec String () BFOperation
 code = choice [increment, decrement, shiftl, shiftr, get, put, loop]
 
 readExpr :: String -> Either BFError [BFOperation]
