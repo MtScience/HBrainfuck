@@ -42,4 +42,10 @@ code = many $ choice [increment, decrement, shiftl, shiftr, read, write, loop]
 readExpr :: String -> Either BFError [BFOperation]
 readExpr input = case parse code "brainfuck" $ stripComments input of
     Left err  -> throwError $ ParseError $ show err
-    Right val -> return val
+    Right val -> return $ optimize val
+
+optimize :: [BFOperation] -> [BFOperation]
+optimize []                         = []
+optimize ((Loop [Increment 1]):ops) = Reset : optimize ops
+optimize ((Loop [Decrement 1]):ops) = Reset : optimize ops
+optimize (op:ops)                   = op : optimize ops
