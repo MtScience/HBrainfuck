@@ -3,8 +3,8 @@ module Types where
 import Data.Word (Word8)
 
 
-data BFOperation = Print
-                 | Read
+data BFOperation = Put
+                 | Get
                  | ShiftRight
                  | ShiftLeft
                  | Increment Word8
