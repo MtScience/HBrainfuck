@@ -1,7 +1,6 @@
 module Main where
 
 import Control.Exception (catch)
-import Control.Monad.State
 import System.Environment
 import System.Exit (exitFailure, exitSuccess)
 import System.IO (hFlush, hPrint, hPutStrLn, stderr, stdout, isEOF)
@@ -10,6 +9,7 @@ import System.IO.Error
 import Evaluator
 import Parser
 import Types
+
 
 main :: IO ()
 main = do
