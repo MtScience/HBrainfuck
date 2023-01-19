@@ -38,6 +38,9 @@ shiftl (Tape (l:ls) cur rs) = Tape ls l (cur:rs)
 shiftr (Tape ls cur [])     = Tape (cur:ls) 0 []
 shiftr (Tape ls cur (r:rs)) = Tape (cur:ls) r rs
 
+reset :: Tape -> Tape
+reset (Tape ls _ rs)     = Tape ls 0 rs
+
 -- Evaluator function
 evaluate :: BFOperation -> StateT Tape IO ()
 evaluate (Increment inc) = modify (increment inc)
@@ -58,6 +61,7 @@ evaluate Read            = do
 evaluate loop@(Loop ops) = do
     Tape _ cur _ <- get
     unless (cur == 0) (mapM_ evaluate ops >> evaluate loop)
+evaluate Reset           = modify reset
 
 run :: [BFOperation] -> Tape -> IO Tape
 run = execStateT . mapM_ evaluate
