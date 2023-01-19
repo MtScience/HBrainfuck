@@ -10,7 +10,7 @@ data BFOperation = Put
                  | Increment Word8
                  | Decrement Word8
                  | Loop [BFOperation]
-		 -- The following can't be directly input by the user
+                 -- The following can't be directly input by the user
                  | Reset
 
 newtype BFError = ParseError String
