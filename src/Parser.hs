@@ -12,47 +12,34 @@ import Text.Parsec.String (Parser)
 import Types
 
 
--- "Comments" parser combinator. Ignores everything except the allowed symbols
-comment :: Parser ()
-comment = skipMany $ noneOf "<>[]+-.,"
+stripComments :: String -> String
+stripComments = filter (`elem` "<>[]+-.,")
 
-{-
-Increment and decrement parser combinators. Since the are the same except for the sign
-and symbols used, the function is parametrized with the symbols to look for and the
-resulting value
--}
+-- Increment and decrement parser combinators
 increment, decrement :: Parser BFOperation
-increment = do
-    inc <- many1 $ char '+'
-    return $ Increment $ fromIntegral $ length inc
-decrement = do
-    inc <- many1 $ char '-'
-    return $ Decrement $ fromIntegral $ length inc
+increment = (Increment . fromIntegral . length) <$> (many1 $ char '+')
+decrement = (Decrement . fromIntegral . length) <$> (many1 $ char '-')
 
 -- Shift parser combinators. Similar to parseIncrement
 shiftl, shiftr :: Parser BFOperation
-shiftl = char '<' >> return ShiftLeft
-shiftr = char '>' >> return ShiftRight
+shiftl = const ShiftLeft <$> char '<'
+shiftr = const ShiftRight <$> char '>'
 
 -- IO parser combinators. Similar to the previous four
 read, write :: Parser BFOperation
-read  = char ',' >> return Read
-write = char '.' >> return Print
+read  = const Read <$> char ','
+write = const Print <$> char '.'
 
 -- Loop parser combinator. Thanks to the properties of Parsec, it automatically ensures
 -- that the brackets are balanced
 loop :: Parser BFOperation
-loop = do
-    char '['
-    loop <- code `endBy` comment
-    char ']'
-    return $ Loop loop
+loop = Loop <$> between (char '[') (char ']') code
 
 -- Complete parser
-code :: Parser BFOperation
-code = comment >> choice [increment, decrement, shiftl, shiftr, read, write, loop]
+code :: Parser [BFOperation]
+code = many $ choice [increment, decrement, shiftl, shiftr, read, write, loop]
 
 readExpr :: String -> Either BFError [BFOperation]
-readExpr input = case parse (code `endBy` comment) "brainfuck" input of
+readExpr input = case parse code "brainfuck" $ stripComments input of
     Left err  -> throwError $ ParseError $ show err
     Right val -> return val
