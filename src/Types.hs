@@ -11,7 +11,7 @@ data BFOperation = Print
                  | Increment Word8
                  | Decrement Word8
                  | Loop [BFOperation]
-		 | Reset
+                 | Reset
 
 {-
 A type for returning errors. Although, brainfuck is too simple to have many errors:
