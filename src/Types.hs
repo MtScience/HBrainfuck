@@ -2,6 +2,7 @@ module Types where
 
 import Data.Word (Word8)
 
+data Tape = Tape [Word8] Word8 [Word8]
 
 data BFOperation = Put
                  | Get
@@ -17,6 +18,3 @@ newtype BFError = ParseError String
 
 instance Show BFError where
     show (ParseError err) = "Parse error:\n" ++ err
-
-
-data Tape = Tape [Word8] Word8 [Word8]
