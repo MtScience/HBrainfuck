@@ -39,4 +39,6 @@ on GNU/Linux.
 
 ## Status
 
-The interpreter is fully functional. However, it is planned to also optimize sequential cell increments and decrements (i.e. code like `+++++---`) and some common idioms, such as `[-]`.
+The interpreter is fully functional, except for handling unbalanced brackets: if there is an unbalanced `]`, it screens all code after it.
+
+Also, it is planned to also optimize sequential cell increments and decrements (i.e. code like `+++++---`) and some common idioms, such as `[-]`. Also, now any unmatched `]`'s are silently ignored
