@@ -13,7 +13,8 @@ This project aims to be as close to the original brainfuck implementation (in te
 Additional features and implementation details:
 * Interactive mode (activated when the executable is run without a target file). Tape state persists between commands. An interactive session can be ended by inputting EOF;
 * Comments are supported;
-* Optimized cell increments and decrements.
+* Optimized cell increments and decrements, `[-]`, `[+]`;
+* When there is a `]` in the code without preceding `[`, all code after `]` is ignored (planned to fix, but such a situation causes undefined behaviour anyway, so it's good enough for now).
 
 ## Running
 
@@ -39,6 +40,4 @@ on GNU/Linux.
 
 ## Status
 
-The interpreter is fully functional, except for handling unbalanced brackets: if there is an unbalanced `]`, it screens all code after it.
-
-Also, it is planned to also optimize sequential cell increments and decrements (i.e. code like `+++++---`) and some common idioms, such as `[-]`. Also, now any unmatched `]`'s are silently ignored
+The interpreter is fully functional.
