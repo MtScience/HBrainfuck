@@ -1,6 +1,5 @@
 module Parser (readExpr) where
 
-import Prelude hiding (read)
 import Control.Monad.Except
 import Data.Word (Word8)
 
@@ -21,15 +20,15 @@ shiftl, shiftr :: Parser BFOperation
 shiftl = ShiftLeft <$ char '<'
 shiftr = ShiftRight <$ char '>'
 
-read, write :: Parser BFOperation
-read  = Read <$ char ','
-write = Print <$ char '.'
+get, put :: Parser BFOperation
+get = Get <$ char ','
+put = Put <$ char '.'
 
 loop :: Parser BFOperation
 loop = Loop <$> between (char '[') (char ']') code
 
 code :: Parser [BFOperation]
-code = many $ choice [increment, decrement, shiftl, shiftr, read, write, loop]
+code = many $ choice [increment, decrement, shiftl, shiftr, get, put, loop]
 
 readExpr :: String -> Either BFError [BFOperation]
 readExpr input = case parse code "brainfuck" $ stripComments input of
