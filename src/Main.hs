@@ -6,7 +6,7 @@ import System.Exit (exitFailure, exitSuccess)
 import System.IO (hFlush, hPrint, hPutStrLn, stderr, stdout, isEOF)
 import System.IO.Error
 
-import Evaluator
+import Interpreter
 import Parser
 import Types
 
