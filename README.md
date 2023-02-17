@@ -6,7 +6,7 @@ My toy implementation of the brainfuck programming language written in Haskell. 
 
 This project aims to be as close to the original brainfuck implementation (in terms of behaviour) as possible. Therefore, it has the following features:
 * 8-bit unsigned integer cells with wrapping around (made with Haskell's `Word8` type);
-* Infinite tape in both directions (instead of a unidirectional 30,000-cell tape in the origianl);
+* Infinite tape in both directions (instead of a unidirectional 30,000-cell tape in the original);
 * The value 10 works as the newline code;
 * When an end-of-file is reached upon execution of `,`, the value of the current cell is left unchanged.
 
