@@ -19,7 +19,7 @@ build-type:            Simple
 executable             brainfuck
   main-is:             Main.hs
   other-modules:       Types,
-                       Evaluator,
+                       Interpreter,
                        Parser
   -- other-extensions:
   build-depends:       base,
