@@ -3,18 +3,18 @@ cabal-version:       >=1.10
 --   For further documentation, see http://haskell.org/cabal/users-guide/
 
 name:                  brainfuck
-version:               0.1.0.0
--- synopsis:
+version:               0.1.0.1
+synopsis:              A toy implementation of brainfuck in Haskel
 -- description:
 -- bug-reports:
-license:               GPL
+license:               GPL-3
 license-file:          LICENSE
 -- author:
 -- maintainer:
 -- copyright:
 -- category:
 build-type:            Simple
--- extra-source-files: 
+extra-source-files:    README.md
 
 executable             brainfuck
   main-is:             Main.hs
