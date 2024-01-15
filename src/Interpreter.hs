@@ -1,4 +1,4 @@
-module Evaluator (run) where
+module Interpreter (run) where
 
 import Control.Monad.State
 import Data.Char (chr, ord)
@@ -37,7 +37,7 @@ evaluate Get = do
     if eof
     then return ()
     else do
-        val <- fromIntegral . ord . head <$> liftIO getLine
+        val <- fromIntegral . ord <$> liftIO getChar
         modify (overwrite val)
 evaluate loop@(Loop ops) = do
     Tape _ cur _ <- get
